@@ -1,17 +1,16 @@
-[tool.poetry]
+[project]
 name = "ml-tech-assessment"
 version = "0.1.0"
 description = ""
-authors = ["jhonvalderrama <jhonvalderrama@aceup.com>"]
+authors = [{ name = "jhonvalderrama", email = "jhonvalderrama@aceup.com" }]
+requires-python = ">=3.14"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-openai = "^1.76.2"
-pydantic-settings = "^2.9.1"
-pytest = "^8.3.5"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+dependencies = [
+    "black>=25.9.0",
+    "fastapi[standard,uvicorn]>=0.121.0",
+    "openai>=1.76.2,<2",
+    "pydantic-settings>=2.9.1,<3",
+    "pytest>=8.3.5,<9",
+    "pytest-cov>=4.1.0,<5",
+    "uvicorn>=0.38.0",
+]
