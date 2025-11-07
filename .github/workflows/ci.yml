@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    name: Lint, Type-check and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.0-pg17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    strategy:
+      matrix:
+        python-version: [ 3.12 ]            # extend to [3.11, 3.12] if you like
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'                   # built-in pip cache
+
+      - name: Install dev dependencies
+        run: |
+          cd backend
+          pip install uv
+          uv sync --dev
+
+      - name: Run Black
+        run: |
+          cd backend
+          uv run black --config=pyproject.toml --check app
+
+      - name: Run Pylint
+        run: |
+          cd backend
+          uv run pylint app/ --rcfile=../.code_quality/.pylintrc
+
+      - name: Run mypy
+        run: |
+          cd backend
+          uv run mypy --config-file=pyproject.toml app
+
+      - name: Wait for DBs to be ready
+        run: |
+          until pg_isready -h localhost -U postgres; do
+            echo "Waiting for Postgres…"
+            sleep 2
+          done
+
+      - name: Run tests
+        run: |
+          cd backend
+          uv run pytest --maxfail=1 --disable-warnings -q
+
