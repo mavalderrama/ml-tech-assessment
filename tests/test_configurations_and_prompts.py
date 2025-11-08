@@ -1,6 +1,5 @@
-from app.configurations import AppSettings
-from app.domain import prompts as domain_prompts
-from app import prompts as app_prompts
+from app.domain.configurations import AppSettings
+from app.domain import prompts as prompts
 
 
 def test_app_settings_defaults() -> None:
@@ -12,14 +11,14 @@ def test_app_settings_defaults() -> None:
 
 
 def test_domain_prompts_have_placeholders() -> None:
-    assert "{transcript}" in domain_prompts.RAW_USER_PROMPT
-    example = domain_prompts.RAW_USER_PROMPT.format(transcript="hello")
+    assert "{transcript}" in prompts.RAW_USER_PROMPT
+    example = prompts.RAW_USER_PROMPT.format(transcript="hello")
     assert "hello" in example
-    assert isinstance(domain_prompts.SYSTEM_PROMPT, str) and len(domain_prompts.SYSTEM_PROMPT) > 0
+    assert isinstance(prompts.SYSTEM_PROMPT, str) and len(prompts.SYSTEM_PROMPT) > 0
 
 
 def test_app_prompts_have_placeholders() -> None:
-    assert "{transcript}" in app_prompts.RAW_USER_PROMPT
-    example = app_prompts.RAW_USER_PROMPT.format(transcript="hi")
+    assert "{transcript}" in prompts.RAW_USER_PROMPT
+    example = prompts.RAW_USER_PROMPT.format(transcript="hi")
     assert "hi" in example
-    assert isinstance(app_prompts.SYSTEM_PROMPT, str) and len(app_prompts.SYSTEM_PROMPT) > 0
+    assert isinstance(prompts.SYSTEM_PROMPT, str) and len(prompts.SYSTEM_PROMPT) > 0

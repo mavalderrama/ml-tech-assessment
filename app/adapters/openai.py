@@ -4,6 +4,8 @@ from app import ports
 
 
 class OpenAIAdapter(ports.LLm):
+    """Adapter for OpenAI API."""
+
     def __init__(self, api_key: str, model: str) -> None:
         self._model = model
         self._client = openai.OpenAI(api_key=api_key)
@@ -14,7 +16,7 @@ class OpenAIAdapter(ports.LLm):
         system_prompt: str,
         user_prompt: str,
         dto: type[pydantic.BaseModel],
-    ) -> pydantic.BaseModel:
+    ) -> pydantic.BaseModel | None:
         """
         Executes a completion request using the OpenAI API with the provided prompts and response format.
 
@@ -43,7 +45,7 @@ class OpenAIAdapter(ports.LLm):
         system_prompt: str,
         user_prompt: str,
         dto: type[pydantic.BaseModel],
-    ) -> pydantic.BaseModel:
+    ) -> pydantic.BaseModel | None:
         """
         Executes a completion request using the OpenAI API with the provided prompts and response format.
 

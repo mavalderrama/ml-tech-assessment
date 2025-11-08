@@ -1,15 +1,17 @@
-import pydantic
 from abc import ABC, abstractmethod
+import pydantic
 
 
 class LLm(ABC):
+    """LLM interface"""
+
     @abstractmethod
     def run_completion(
         self,
         system_prompt: str,
         user_prompt: str,
         dto: type[pydantic.BaseModel],
-    ) -> pydantic.BaseModel:
+    ) -> pydantic.BaseModel | None:
         pass
 
     @abstractmethod
@@ -18,5 +20,5 @@ class LLm(ABC):
         system_prompt: str,
         user_prompt: str,
         dto: type[pydantic.BaseModel],
-    ) -> pydantic.BaseModel:
+    ) -> pydantic.BaseModel | None:
         pass

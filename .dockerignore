@@ -1,9 +1,9 @@
-.env
 .idea
 .venv
-.DS_Store
 .coverage
-__pycache__
+.pre-commit-config.yaml
+.github
+tests/
 deployment/gcp_key.json
 deployment/.terraform/
 deployment/.terraform.lock.hcl

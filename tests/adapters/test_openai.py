@@ -4,7 +4,7 @@ from typing import Any
 import pydantic
 import pytest
 
-from app import configurations
+from app.domain import configurations
 from tests.adapters import mock_data
 from app.adapters import openai as openai_adapter_module
 from app.domain import dtos

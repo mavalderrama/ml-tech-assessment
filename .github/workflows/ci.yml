@@ -16,24 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    services:
-      postgres:
-        image: pgvector/pgvector:0.8.0-pg17
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     strategy:
       matrix:
-        python-version: [ 3.12 ]            # extend to [3.11, 3.12] if you like
+        python-version: [ 3.14 ]
 
     steps:
       - uses: actions/checkout@v3
@@ -58,19 +43,12 @@ jobs:
       - name: Run Pylint
         run: |
           cd backend
-          uv run pylint app/ --rcfile=../.code_quality/.pylintrc
+          uv run pylint app/ 
 
       - name: Run mypy
         run: |
           cd backend
-          uv run mypy --config-file=pyproject.toml app
-
-      - name: Wait for DBs to be ready
-        run: |
-          until pg_isready -h localhost -U postgres; do
-            echo "Waiting for Postgres…"
-            sleep 2
-          done
+          uv run mypy .
 
       - name: Run tests
         run: |

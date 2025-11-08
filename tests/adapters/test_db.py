@@ -40,6 +40,9 @@ async def test_db_crud_async_basic() -> None:
     assert updated is not None
     assert updated["a"] == 2 and updated["id"] == created["id"]  # type: ignore[index]
 
+    # exercise missing branch for aupdate
+    assert await database.aupdate("missing", {"a": 3}) is None
+
     all_items = await database.aall()
     assert len(all_items) == 1
 

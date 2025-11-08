@@ -1,14 +1,15 @@
-import pydantic
+import asyncio
 
 from app.ports import llm, manager
 from app.domain import dtos
 from app.domain import prompts
-import asyncio
-from logger import logger
 from app.adapters import db
+from app import logger
 
 
 class Controller(manager.Manager):
+    """Controller class."""
+
     def __init__(
         self,
         llm_client: llm.LLm,
@@ -18,7 +19,7 @@ class Controller(manager.Manager):
     def summarize(
         self,
         text: dtos.Transcript,
-    ) -> pydantic.BaseModel:
+    ) -> dtos.LLMResponseId | None:
         user_prompt = prompts.RAW_USER_PROMPT.format(
             transcript=text,
         )
@@ -27,13 +28,15 @@ class Controller(manager.Manager):
             user_prompt=user_prompt,
             dto=dtos.LLMResponse,
         )
+        if not summary:
+            return None
         response = db.database.create(summary.model_dump())
         return dtos.LLMResponseId.model_validate(response)
 
     async def asummarize(
         self,
         documents: dtos.Transcripts,
-    ) -> dtos.LLMresponses:
+    ) -> dtos.LLMresponses | None:
         system_prompt = prompts.SYSTEM_PROMPT
         try:
             async with asyncio.TaskGroup() as tg:
@@ -52,15 +55,17 @@ class Controller(manager.Manager):
                             )
                         )
                     )
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except  # multiple things can go wrong here
             logger.exception(e)
+            return None
 
         results = []
         for task in tasks:
             r = task.result()
-            results.append(r.model_dump())
+            if r:
+                results.append(r.model_dump())
 
-        return dtos.LLMresponses(responses=await db.database.bulk_acreate(results))
+        return dtos.LLMresponses.model_validate({"responses": await db.database.bulk_acreate(results)})
 
-    def get_summary(self, id: str):
+    def get_summary(self, id: str):  # pylint: disable=redefined-builtin
         return dtos.LLMResponseId.model_validate(db.database.get(id))

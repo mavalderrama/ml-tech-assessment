@@ -5,6 +5,8 @@ from typing import Any, Dict, List, Optional
 
 
 class Repository(ABC):
+    """Repository interface."""
+
     @abstractmethod
     def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         raise NotImplementedError

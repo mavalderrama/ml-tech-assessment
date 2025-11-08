@@ -2,8 +2,10 @@ import pydantic_settings
 
 
 class AppSettings(pydantic_settings.BaseSettings):
+    """Application settings."""
+
     model_config = pydantic_settings.SettingsConfigDict(
-        env_file="../.env",
+        env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )

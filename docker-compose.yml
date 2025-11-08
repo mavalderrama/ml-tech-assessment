@@ -1,0 +1,16 @@
+services:
+  transcriber:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+    image: us-docker.pkg.dev/jupyter-247316/aceup-demo/app:latest
+    container_name: transcriber
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+
+

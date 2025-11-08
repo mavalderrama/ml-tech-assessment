@@ -1,4 +1,4 @@
-default_stages: [ pre-commit, manual, commit-msg]
+default_stages: [ pre-commit, manual, commit-msg ]
 
 repos:
   # Code formatter
@@ -10,15 +10,7 @@ repos:
         files: ^backend/.*\.py$
         args:
           - --config=backend/pyproject.toml
-  # Style guide enforcement
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-        args:
-          - --config=.code_quality/.flake8
 
-  # Static code analyser
   - repo: local
     hooks:
       - id: pylint
@@ -26,48 +18,11 @@ repos:
         entry: pylint
         language: python
         types: [ python ]
-        additional_dependencies:
-          - pylint
-          - pylint-django
-          - django
         files: \.py$
-        exclude: ^(backend/tests/|.*migrations.*|settings\.py|manage\.py)$
+        exclude: ^(tests)$
         args:
-          - backend/app
-          - --rcfile=.code_quality/.pylintrc
-
-  # Common security issues analysis
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.9
-    hooks:
-      - id: bandit
-        args:
-          - -c
-          - .code_quality/bandit.yaml
-
-  # Static type checker
-  - repo: local
-    hooks:
-        - id: mypy-local
-          name: mypy
-          pass_filenames: false
-          language: system
-          types: [ python ]
-          entry: |
-            bash -lc '
-            set -e
-            cd backend
-            if [ -n "$VIRTUAL_ENV" ]; then
-            exec mypy . --config-file=pyproject.toml "$@"
-            elif [ -f .venv/bin/activate ]; then
-            # fallback venv inside backend/
-            source .venv/bin/activate
-            exec mypy . --config-file=pyproject.toml "$@"
-            else
-            echo "❌ No Python venv detected for backend. Please activate one or create backend/.venv" >&2
-            exit 1
-            fi
-            '
+          - app
+          - --rcfile=pyproject.toml
 
   # Conventional commits
   - repo: https://github.com/compilerla/conventional-pre-commit

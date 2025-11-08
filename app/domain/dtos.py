@@ -1,5 +1,5 @@
-import pydantic
 from uuid import UUID
+import pydantic
 
 
 class LLMresponses(pydantic.BaseModel):
@@ -17,6 +17,13 @@ class LLMResponseId(LLMResponse):
 
 class Transcript(pydantic.BaseModel):
     text: str
+
+    @pydantic.field_validator("text", mode="before")
+    @classmethod
+    def _strip_text(cls, v: str) -> str:
+        if len(value := v.strip()) == 0:
+            raise ValueError("Transcript cannot be empty")
+        return value
 
 
 class Transcripts(pydantic.BaseModel):

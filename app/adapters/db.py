@@ -6,6 +6,8 @@ from app.ports import repository
 
 
 class DB(repository.Repository):
+    """In memory database."""
+
     def __init__(self) -> None:
         self._store: dict[str, dict[str, Any]] = {}
 

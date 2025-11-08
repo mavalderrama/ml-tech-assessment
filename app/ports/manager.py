@@ -3,10 +3,18 @@ from app.domain import dtos
 
 
 class Manager(ABC):
+    """Manager interface"""
+
     @abstractmethod
-    def summarize(self, text: dtos.Transcript):
+    def summarize(
+        self,
+        text: dtos.Transcript,
+    ) -> dtos.LLMResponse | None:
         pass
 
     @abstractmethod
-    async def asummarize(self, text: dtos.Transcripts):
+    async def asummarize(
+        self,
+        documents: dtos.Transcripts,
+    ) -> dtos.LLMresponses | None:
         pass
