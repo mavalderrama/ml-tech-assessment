@@ -31,27 +31,22 @@ jobs:
 
       - name: Install dev dependencies
         run: |
-          cd backend
           pip install uv
           uv sync --dev
 
       - name: Run Black
         run: |
-          cd backend
           uv run black --config=pyproject.toml --check app
 
       - name: Run Pylint
         run: |
-          cd backend
           uv run pylint app/ 
 
       - name: Run mypy
         run: |
-          cd backend
           uv run mypy .
 
       - name: Run tests
         run: |
-          cd backend
           uv run pytest --maxfail=1 --disable-warnings -q
 

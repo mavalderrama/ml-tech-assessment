@@ -50,27 +50,19 @@ class _AsyncCompletions:
 
 class _SyncClient:
     def __init__(self, api_key: str):
-        self.beta = type(
-            "Beta", (), {"chat": type("Chat", (), {"completions": _SyncCompletions()})}
-        )()
+        self.beta = type("Beta", (), {"chat": type("Chat", (), {"completions": _SyncCompletions()})})()
 
 
 class _AsyncClient:
     def __init__(self, api_key: str):
-        self.beta = type(
-            "Beta", (), {"chat": type("Chat", (), {"completions": _AsyncCompletions()})}
-        )()
+        self.beta = type("Beta", (), {"chat": type("Chat", (), {"completions": _AsyncCompletions()})})()
 
 
 @pytest.fixture(autouse=True)
 def _patch_openai(monkeypatch: pytest.MonkeyPatch) -> None:
     # Patch the openai clients used inside the adapter
-    monkeypatch.setattr(
-        openai_adapter_module.openai, "OpenAI", _SyncClient, raising=True
-    )
-    monkeypatch.setattr(
-        openai_adapter_module.openai, "AsyncOpenAI", _AsyncClient, raising=True
-    )
+    monkeypatch.setattr(openai_adapter_module.openai, "OpenAI", _SyncClient, raising=True)
+    monkeypatch.setattr(openai_adapter_module.openai, "AsyncOpenAI", _AsyncClient, raising=True)
 
 
 def test_openai_adapter_sync() -> None:
@@ -79,9 +71,7 @@ def test_openai_adapter_sync() -> None:
     system_prompt = mock_data.SYSTEM_PROMPT
     user_prompt = mock_data.RAW_USER_PROMPT.format(transcript=mock_data.TRANSCRIPT)
 
-    adapter = openai_adapter_module.OpenAIAdapter(
-        env_variables.OPENAI_API_KEY, env_variables.OPENAI_MODEL
-    )
+    adapter = openai_adapter_module.OpenAIAdapter(env_variables.OPENAI_API_KEY, env_variables.OPENAI_MODEL)
 
     response = adapter.run_completion(system_prompt, user_prompt, dtos.LLMResponse)
     data = response.model_dump()
@@ -97,13 +87,9 @@ async def test_openai_adapter_async() -> None:
     system_prompt = mock_data.SYSTEM_PROMPT
     user_prompt = mock_data.RAW_USER_PROMPT.format(transcript=mock_data.TRANSCRIPT)
 
-    adapter = openai_adapter_module.OpenAIAdapter(
-        env_variables.OPENAI_API_KEY, env_variables.OPENAI_MODEL
-    )
+    adapter = openai_adapter_module.OpenAIAdapter(env_variables.OPENAI_API_KEY, env_variables.OPENAI_MODEL)
 
-    response = await adapter.run_completion_async(
-        system_prompt, user_prompt, dtos.LLMResponse
-    )
+    response = await adapter.run_completion_async(system_prompt, user_prompt, dtos.LLMResponse)
     data = response.model_dump()
 
     assert data["summary"] == "ok"

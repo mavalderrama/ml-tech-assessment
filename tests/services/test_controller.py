@@ -10,14 +10,10 @@ from app.adapters import db
 
 
 class FakeLLM:
-    def run_completion(
-        self, system_prompt: str, user_prompt: str, dto: type[dtos.LLMResponse]
-    ):
+    def run_completion(self, system_prompt: str, user_prompt: str, dto: type[dtos.LLMResponse]):
         return dto(summary="sum", action_items=["x"])  # type: ignore[call-arg]
 
-    async def run_completion_async(
-        self, system_prompt: str, user_prompt: str, dto: type[dtos.LLMResponse]
-    ):
+    async def run_completion_async(self, system_prompt: str, user_prompt: str, dto: type[dtos.LLMResponse]):
         await asyncio.sleep(0)
         return dto(summary="asum", action_items=["ax"])  # type: ignore[call-arg]
 
@@ -43,9 +39,7 @@ def test_controller_summarize_sync(fresh_db) -> None:  # type: ignore[no-redef]
 async def test_controller_summarize_async(fresh_db) -> None:  # type: ignore[no-redef]
     ctl = Controller(llm_client=FakeLLM())
 
-    docs = dtos.Transcripts(
-        transcripts=[dtos.Transcript(text="a"), dtos.Transcript(text="b")]
-    )
+    docs = dtos.Transcripts(transcripts=[dtos.Transcript(text="a"), dtos.Transcript(text="b")])
     out = await ctl.asummarize(docs)
 
     assert len(out.responses) == 2

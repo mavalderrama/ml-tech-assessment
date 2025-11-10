@@ -44,9 +44,7 @@ class Repository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def aupdate(
-        self, obj_id: str, data: Dict[str, Any]
-    ) -> Optional[Dict[str, Any]]:
+    async def aupdate(self, obj_id: str, data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod
